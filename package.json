@@ -40,7 +40,8 @@
     "prettier": "^3.2.5",
     "typescript": "~5.2.2",
     "cspell": "^8.3.2",
-    "markdown-link-check": "^3.12.1"
+    "markdown-link-check": "^3.12.1",
+    "@easyops-cn/docusaurus-search-local": "^0.40.1"
   },
   "browserslist": {
     "production": [

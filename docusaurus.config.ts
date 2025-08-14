@@ -1,17 +1,21 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'curious dev Blog',
-  tagline: 'Exploring the art and science of software development',
+  tagline: 'Pulling on the threads that interest me',
   favicon: 'img/favicon.ico',
 
-  url: 'https://blog.curiousdev.io',
-  baseUrl: '/',
+  // GitHub Pages deployment configuration
+  url: 'https://curiousdev.github.io', // Replace 'curiousdev' with your GitHub username
+  baseUrl: '/blog.curiousdev.io/', // Replace with your repository name
 
-  organizationName: 'curiousdev',
-  projectName: 'blog.curiousdev.io',
+  // GitHub Pages deployment settings
+  organizationName: 'curiousdev', // Replace with your GitHub username/org
+  projectName: 'blog.curiousdev.io', // Replace with your repository name
+  deploymentBranch: 'gh-pages', // The branch to deploy to
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -31,9 +35,9 @@ const config: Config = {
           showReadingTime: true,
           feedOptions: {
             type: 'all',
-            copyright: `Copyright © ${new Date().getFullYear()} curious dev Blog.`,
+            copyright: `Copyright © ${new Date().getFullYear()} Curious Dev Blog.`,
             createFeedItems: async (params) => {
-              const {blogPosts, defaultCreateFeedItems, ...rest} = params;
+              const { blogPosts, defaultCreateFeedItems, ...rest } = params;
               return defaultCreateFeedItems({
                 blogPosts: blogPosts.filter((item, index) => index < 10),
                 ...rest,
@@ -52,9 +56,9 @@ const config: Config = {
   themeConfig: {
     image: 'img/social-card.jpg',
     navbar: {
-      title: 'curious dev',
+      title: 'Curious Dev',
       logo: {
-        alt: 'curious dev Logo',
+        alt: 'Curious Dev Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -82,7 +86,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} curious dev Blog. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Curious Dev Blog. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

@@ -4,12 +4,96 @@ python = "3.11"   # For pre-commit hooks
 
 [env]
 NODE_ENV = "development"
+# GitHub Pages configuration for SSH deployment
+GIT_USER = "curiousdev"  # Replace with your GitHub username
+USE_SSH = "true"         # Use SSH for GitHub authentication
+DEPLOYMENT_BRANCH = "gh-pages"
 
-[tasks]
-dev = "npm start"
-build = "npm run build"
-serve = "npm run serve"
-lint = "npm run lint"
-spell = "cspell \"**/*.{md,mdx,js,jsx,ts,tsx}\" --no-progress"
-links = "markdown-link-check docs/**/*.md docs/**/*.mdx --config .markdown-link-check.json"
-pre-commit = "pre-commit run --all-files"
+# Development tasks
+[tasks.dev]
+run = "npm start"
+description = "Start the development server at http://localhost:3000"
+
+[tasks.build]
+run = "npm run build"
+description = "Build the site for production into the build/ directory"
+
+[tasks.serve]
+run = "npm run serve"
+description = "Serve the production build locally for testing"
+
+# Code quality tasks
+[tasks.lint]
+run = "npm run lint"
+description = "Run ESLint to check for code style and quality issues"
+
+[tasks.spell]
+run = "cspell \"**/*.{md,mdx,js,jsx,ts,tsx}\" --no-progress"
+description = "Check spelling in markdown and source files"
+
+[tasks.links]
+run = "markdown-link-check docs/**/*.md docs/**/*.mdx --config .markdown-link-check.json"
+description = "Verify all markdown links are working"
+
+[tasks.pre-commit]
+run = "pre-commit run --all-files"
+description = "Run all pre-commit hooks (linting, spell check, formatting)"
+
+# GitHub Pages deployment tasks
+[tasks.deploy]
+depends = ["build"]
+run = "USE_SSH=true GIT_USER=$GIT_USER npm run deploy"
+description = "Deploy the built site to GitHub Pages using SSH"
+
+[tasks.deploy-force]
+depends = ["build"]
+run = "USE_SSH=true GIT_USER=$GIT_USER npm run deploy"
+description = "Force deploy to GitHub Pages with explicit git user via SSH"
+
+# Deployment verification and utilities
+[tasks.check-deploy]
+run = """
+echo 'Checking deployment prerequisites...'
+git status --porcelain || echo 'Warning: You have uncommitted changes'
+git remote -v | grep origin || echo 'Error: No origin remote found'
+echo 'Current branch:' && git branch --show-current
+echo 'Checking SSH key access to GitHub...'
+ssh -T git@github.com 2>&1 | grep -q 'successfully authenticated' && echo 'SSH key working' || echo 'Warning: SSH key may not be configured'
+echo 'Ready to deploy!'
+"""
+description = "Verify git status and SSH key setup before deploying"
+
+# Complete deployment workflow
+[tasks.deploy-workflow]
+run = """
+echo '🚀 Starting deployment workflow...'
+mise run check-deploy
+echo '📝 Running pre-commit checks...'
+mise run pre-commit
+echo '🔧 Building site...'
+mise run build
+echo '📤 Deploying to GitHub Pages...'
+mise run deploy
+echo '✅ Deployment complete! Site should be live in a few minutes.'
+"""
+description = "Complete workflow: check git status, run quality checks, build, and deploy"
+
+# Domain verification and DNS testing
+[tasks.check-domain]
+run = """
+echo '🔍 Checking DNS configuration for blog.curiousdev.io...'
+dig blog.curiousdev.io A +short
+echo 'CNAME records:'
+dig blog.curiousdev.io CNAME +short
+echo 'Testing HTTP connectivity:'
+curl -I http://blog.curiousdev.io 2>/dev/null | head -1 || echo 'HTTP not yet available'
+echo 'Testing HTTPS connectivity:'
+curl -I https://blog.curiousdev.io 2>/dev/null | head -1 || echo 'HTTPS not yet available'
+"""
+description = "Test DNS resolution and connectivity for the custom domain"
+
+# Quick publish (build + deploy)
+[tasks.publish]
+depends = ["build"]
+run = "USE_SSH=true GIT_USER=$GIT_USER npm run deploy"
+description = "Quick build and deploy via SSH - most commonly used deployment command"
