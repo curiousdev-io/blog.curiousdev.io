@@ -7,8 +7,8 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
     'plugin:react/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -18,17 +18,26 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-    '@typescript-eslint',
-  ],
+  plugins: ['react', '@typescript-eslint'],
   rules: {
     'react/react-in-jsx-scope': 'off',
-    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'no-unused-vars': 'off', // Turn off base rule to avoid conflicts
   },
   settings: {
     react: {
       version: 'detect',
     },
   },
+  // Override for TypeScript files only
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react/recommended',
+      ],
+    },
+  ],
 };

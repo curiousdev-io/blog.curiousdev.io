@@ -44,7 +44,8 @@ const config: Config = {
               });
             },
           },
-          editUrl: 'https://github.com/curiousdev/blog.curiousdev.io/tree/main/',
+          editUrl:
+            'https://github.com/curiousdev/blog.curiousdev.io/tree/main/',
         },
         theme: {
           customCss: './src/css/custom.css',

@@ -13,18 +13,21 @@ A technical blog exploring software development and other things that interest m
 ### Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/curiousdev-io/blog.curiousdev.io.git
    cd blog.curiousdev.io
    ```
 
 2. Install tools and dependencies:
+
    ```bash
    mise install
    npm install
    ```
 
 3. Install pre-commit hooks:
+
    ```bash
    pip install pre-commit
    pre-commit install
@@ -40,6 +43,7 @@ A technical blog exploring software development and other things that interest m
 ## Available Commands
 
 Using mise:
+
 - `mise run dev` - Start development server
 - `mise run build` - Build for production
 - `mise run serve` - Serve production build locally
@@ -86,6 +90,7 @@ More content after the fold...
 ## Pre-commit Hooks
 
 This project includes several pre-commit hooks:
+
 - **Spell checking** with cspell
 - **Link checking** for markdown files
 - **Code linting** with ESLint
@@ -95,6 +100,7 @@ This project includes several pre-commit hooks:
 ## Deployment
 
 The blog can be deployed to various platforms:
+
 - **GitHub Pages**: Use `npm run deploy`
 - **Netlify**: Connect your repository and build with `npm run build`
 - **Vercel**: Import your repository and deploy

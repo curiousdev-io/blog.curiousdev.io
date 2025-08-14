@@ -6,8 +6,5 @@
       "@site/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/",
-    "docusaurus.config.ts"
-  ]
+  "include": ["src/", "docusaurus.config.ts"]
 }
