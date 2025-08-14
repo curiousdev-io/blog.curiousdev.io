@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog_curiousdev_io=self.webpackChunkblog_curiousdev_io||[]).push([[472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Welcome to the curious dev Blog","permalink":"/blog.curiousdev.io/welcome","unlisted":false,"date":"2025-08-13T00:00:00.000Z"}]}')}}]);

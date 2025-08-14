@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog_curiousdev_io=self.webpackChunkblog_curiousdev_io||[]).push([[87],{46:o=>{o.exports=JSON.parse('{"tags":[{"label":"welcome","permalink":"/blog.curiousdev.io/tags/welcome","count":1},{"label":"introduction","permalink":"/blog.curiousdev.io/tags/introduction","count":1}]}')}}]);

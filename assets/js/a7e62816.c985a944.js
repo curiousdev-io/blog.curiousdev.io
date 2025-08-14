@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog_curiousdev_io=self.webpackChunkblog_curiousdev_io||[]).push([[745],{1325:o=>{o.exports=JSON.parse('{"metadata":{"permalink":"/blog.curiousdev.io/","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

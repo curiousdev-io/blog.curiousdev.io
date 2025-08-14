@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>curious dev Blog Blog</title>
+        <link>https://curiousdev.github.io/blog.curiousdev.io</link>
+        <description>curious dev Blog Blog</description>
+        <lastBuildDate>Wed, 13 Aug 2025 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <copyright>Copyright © 2025 Curious Dev Blog.</copyright>
+        <item>
+            <title><![CDATA[Welcome to the curious dev Blog]]></title>
+            <link>https://curiousdev.github.io/blog.curiousdev.io/welcome</link>
+            <guid>https://curiousdev.github.io/blog.curiousdev.io/welcome</guid>
+            <pubDate>Wed, 13 Aug 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[Welcome to the curious dev Blog! This is where I'll explore the fascinating world of software development, share insights, and dive deep into the technologies that shape our digital world.]]></description>
+            <content:encoded><![CDATA[<p>Welcome to the curious dev Blog! This is where I'll explore the fascinating world of software development, share insights, and dive deep into the technologies that shape our digital world.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="what-to-expect">What to Expect<a href="https://curiousdev.github.io/blog.curiousdev.io/welcome#what-to-expect" class="hash-link" aria-label="Direct link to What to Expect" title="Direct link to What to Expect">​</a></h2>
+<p>In this blog, you'll find:</p>
+<ul>
+<li><strong>Technical deep dives</strong> into modern development practices</li>
+<li><strong>Tool reviews</strong> and comparisons</li>
+<li><strong>Project walkthroughs</strong> and tutorials</li>
+<li><strong>Industry insights</strong> and trends</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="about-this-blog">About This Blog<a href="https://curiousdev.github.io/blog.curiousdev.io/welcome#about-this-blog" class="hash-link" aria-label="Direct link to About This Blog" title="Direct link to About This Blog">​</a></h2>
+<p>This blog is built with <a href="https://docusaurus.io/" target="_blank" rel="noopener noreferrer">Docusaurus</a>, a modern static site generator that's perfect for technical documentation and blogs. The entire setup is managed with <a href="https://mise.jdx.dev/" target="_blank" rel="noopener noreferrer">mise</a>, ensuring a consistent development environment.</p>
+<p>Stay curious! 🚀</p>]]></content:encoded>
+            <category>welcome</category>
+            <category>introduction</category>
+        </item>
+    </channel>
+</rss>
