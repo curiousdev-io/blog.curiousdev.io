@@ -14,7 +14,7 @@ A technical blog exploring software development and other things that interest m
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/curiousdev/blog.curiousdev.io.git
+   git clone https://github.com/curiousdev-io/blog.curiousdev.io.git
    cd blog.curiousdev.io
    ```
 
