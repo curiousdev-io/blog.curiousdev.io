@@ -1,6 +1,6 @@
-# curious dev Blog
+# curiousdev.io Blog
 
-A technical blog exploring software development, built with Docusaurus and managed with mise.
+A technical blog exploring software development and other things that interest me.
 
 ## Quick Start
 
