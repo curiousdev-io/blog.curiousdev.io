@@ -4,9 +4,8 @@ python = "3.11"   # For pre-commit hooks
 
 [env]
 NODE_ENV = "development"
-
 # GitHub Pages configuration for SSH deployment
-GIT_USER = "mcnamarabrian"  # Replace with your GitHub username
+GIT_USER = "mcnamarabrian"
 USE_SSH = "true"         # Use SSH for GitHub authentication
 DEPLOYMENT_BRANCH = "gh-pages"
 

@@ -35,7 +35,7 @@ const config: Config = {
           showReadingTime: true,
           feedOptions: {
             type: 'all',
-            copyright: `Copyright © ${new Date().getFullYear()} curious dev Blog.`,
+            copyright: `Copyright © ${new Date().getFullYear()} Curious Dev Blog.`,
             createFeedItems: async (params) => {
               const { blogPosts, defaultCreateFeedItems, ...rest } = params;
               return defaultCreateFeedItems({
@@ -56,9 +56,9 @@ const config: Config = {
   themeConfig: {
     image: 'img/social-card.jpg',
     navbar: {
-      title: 'curious dev',
+      title: 'Curious Dev',
       logo: {
-        alt: 'curious dev Logo',
+        alt: 'Curious Dev Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -86,7 +86,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} curious dev Blog. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Curious Dev Blog. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
