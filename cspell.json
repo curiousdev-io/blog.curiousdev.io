@@ -1,0 +1,27 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Docusaurus",
+    "curiousdev",
+    "mise",
+    "tsx",
+    "jsx",
+    "mdx",
+    "frontmatter",
+    "navbar",
+    "favicon",
+    "tagline",
+    "slugify",
+    "webpack",
+    "browserslist"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".git/**",
+    "build/**",
+    ".docusaurus/**",
+    "package-lock.json",
+    "yarn.lock"
+  ]
+}

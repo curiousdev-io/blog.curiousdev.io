@@ -1,0 +1,15 @@
+[tools]
+node = "20.18.1"  # Latest LTS version supported by Docusaurus
+python = "3.11"   # For pre-commit hooks
+
+[env]
+NODE_ENV = "development"
+
+[tasks]
+dev = "npm start"
+build = "npm run build"
+serve = "npm run serve"
+lint = "npm run lint"
+spell = "cspell \"**/*.{md,mdx,js,jsx,ts,tsx}\" --no-progress"
+links = "markdown-link-check docs/**/*.md docs/**/*.mdx --config .markdown-link-check.json"
+pre-commit = "pre-commit run --all-files"
