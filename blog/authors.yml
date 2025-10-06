@@ -1,5 +1,9 @@
 Brian:
   name: Brian McNamara
   title: Software Developer
-  url: https://github.com/mcnamarabrian
+  links:
+    - label: GitHub
+      url: https://github.com/curiousdev-io/
+    - label: LinkedIn
+      url: https://www.linkedin.com/in/mcnamarabrian/
   image_url: https://0.gravatar.com/avatar/dc127dcc4a61bb03e1b8045692a67a627cc5eb9661e6b22f810b2c67e2075f2d?size=512&d=initials
