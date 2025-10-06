@@ -1,6 +1,6 @@
 ---
 slug: aws-lambda-container-images-part-1-aws-base-image-for-lambda
-title: AWS Lambda Container Images (Part 1: AWS Base Image for Lambda)
+title: AWS Lambda Container Images (Part 1 - AWS Base Image for Lambda)
 authors: [Brian]
 tags: [aws, lambda, container]
 ---
