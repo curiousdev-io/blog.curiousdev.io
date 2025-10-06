@@ -74,11 +74,11 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Community',
+          title: 'About Me',
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/mcnamarabrian',
+              href: 'https://github.com/curiousdev-io',
             },
             {
               label: 'LinkedIn',
