@@ -1,11 +1,11 @@
 ---
-slug: aws-lambda-container-images
-title: AWS Lambda Container Images
+slug: aws-lambda-container-images-part-1-aws-base-image-for-lambda
+title: AWS Lambda Container Images (Part 1: AWS Base Image for Lambda)
 authors: [Brian]
 tags: [aws, lambda, container]
 ---
 
-AWS Lambda is a compute service that runs code without the need to manage servers. In this post I'll look at why you might want to package your function code in a container image, how to do it, and how to take advantage of additional capabilities.
+AWS Lambda is a compute service that runs code without the need to manage servers. In this post I'll look at why you might want to package your function code in a container image, how to do it, and how to take advantage of additional capabilities. I'll explore how to use [AWS base images for Lambda](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#runtimes-images-lp). Subsequent posts will look at other options for deploying Lambda functions using container packaging.
 
 <!--truncate-->
 
@@ -23,13 +23,15 @@ AWS Lambda functions can be packaged in either a zip archive or in a container i
 
 [tl;dr I have a code repository supporting showing you how to do this in depth - the snippets below are illustrative only](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main)
 
-There are a few different ways to build out Lambda functions using container imaging. The first is to build upon an AWS base image for Lambda. This will be the focus of this post. Subsequent posts will look at using AWS OS-only images and non-AWS base images.
+There are a few different ways to build out Lambda functions using container imaging. The first is to build upon an AWS base image for Lambda. This will be the focus of this post.
 
-### Step 0: Why Use a AWS-Provided Image?
+### Step 0: Consider Your Base Image
 
 So...why start with an AWS-provided image? Simple - it includes everything you need to get your function to run. It contains the runtime and, more importantly, the Runtime Interface Client (RIC) - the thing that polls the Lambda Runtime API for events.
 
-### Step 1: Dockerfile
+Why might you consider _not_ using a AWS base image? That's the subject of later parts to the post series.
+
+### Step 1: Create Your Dockerfile
 
 If you're familiar with Docker already then you'll be familiar with the syntax of the `Dockerfile`. Using a `Dockerfile` for AWS Lambda functions is actually pretty straightforward. Here is a sample one. Even if you're not a Docker expert it's likely you can follow along.
 
@@ -50,11 +52,14 @@ COPY src ${LAMBDA_TASK_ROOT}
 CMD [ "lambda_function.handler" ]
 ```
 
+This snippet is purposefully small. It's done to illustrate the minimal `Dockerfile` you would need. Not included in the snippet is your actual function code. See the [supporting repository](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main) for more detail around the rest of the application.
+
 ### Step 2: Local Docker
 
 With the `Dockerfile` and your accompanying code, you can actually run your image locally and experiment with it. AWS provides other mechanisms for zip-packaged Lambda functions (looking at you, AWS SAM CLI) but they're not needed for local containers. Just run your Docker CLI and start the container in the background:
 
 ```bash
+docker buildx build --platform linux/arm64 --provenance=false --tag curiousdev-io/python:3.13 .
 docker run -p 9000:8080 curiousdev-io/python:3.13 &
 ```
 
@@ -77,6 +82,8 @@ curl "http://localhost:9000/2015-03-31/functions/function/invocations" \
     }
   }'
 ```
+
+Up to this point, you're only using your Docker commands you likely already know and love.
 
 ### Step 3: Create the Amazon Elastic Container (ECR) Registry
 
