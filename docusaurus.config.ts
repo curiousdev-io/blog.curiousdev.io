@@ -8,11 +8,11 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   // GitHub Pages deployment configuration
-  url: 'https://curiousdev.github.io', // Replace 'curiousdev' with your GitHub username
-  baseUrl: '/blog.curiousdev.io/', // Replace with your repository name
+  url: 'https://blog.curiousdev.io', // Replace 'curiousdev' with your GitHub username
+  baseUrl: '/', // Replace with your repository name
 
   // GitHub Pages deployment settings
-  organizationName: 'curiousdev', // Replace with your GitHub username/org
+  organizationName: 'curiousdev-io', // Replace with your GitHub username/org
   projectName: 'blog.curiousdev.io', // Replace with your repository name
   deploymentBranch: 'gh-pages', // The branch to deploy to
   trailingSlash: false,
@@ -45,7 +45,7 @@ const config: Config = {
             },
           },
           editUrl:
-            'https://github.com/curiousdev/blog.curiousdev.io/tree/main/',
+            'https://github.com/curiousdev-io/blog.curiousdev.io/tree/main/',
         },
         theme: {
           customCss: './src/css/custom.css',
