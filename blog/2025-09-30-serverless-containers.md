@@ -88,7 +88,7 @@ aws ecr create-repository --region "$REGION" --repository-name your-repo-name
 
 ### Step 4: Push the Local Container Image
 
-You should publish the local image to ECR at this point. THere are a few things you'll need to do.
+You should publish the local image to ECR at this point. There are a few things you'll need to do.
 
 * Authenticate Docker to ECR
 
@@ -108,7 +108,13 @@ Ok... I suppose if you create a really novel application then this is where you 
 
 ## Conclusion
 
-There are a few extra steps needed to deploy a container based AWS Lambda function but all of it can be automated using CI/CD processes. Keep in mind what you can get in return and consider whether you have a need for container packaged functions.
+There are a few extra steps needed to deploy a container based AWS Lambda function but all of it can be automated using CI/CD processes. Keep in mind what you can get in return and consider whether you have a need for container packaged functions:
+
+- **Larger deployment size**
+- **Docker workflow**
+- **Dependency management**
+- **Easier local testing**
+- **Easier to switch between serverless compute services**
 
 
 Stay curious! 🚀
