@@ -150,7 +150,7 @@ MyFunction:
 
 There are some common pitfalls to avoid.
 
-- **Platform architecture**: Notice the `--platform linux/arm64` flag when running `dockerx build`? Lambda supports both x86 and ARM (Graviton2). ARM is cheaper and often faster.
+- **Platform architecture**: Notice the `--platform linux/arm64` flag when running [`docker buildx`](#step-2-local-docker)? Lambda supports both x86 and ARM (Graviton2). ARM is cheaper and often faster.
 
 - **Image size still matters**: Even with 10GB available, cold starts increase with image size. Keep it lean.
 
