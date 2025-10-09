@@ -146,6 +146,16 @@ MyFunction:
     ImageUri: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/your-repo:latest
 ```
 
+## Gotchas
+
+There are some common pitfalls to avoid.
+
+- **Platform architecture**: Notice the `--platform linux/arm64` flag when running `dockerx build`? Lambda supports both x86 and ARM (Graviton2). ARM is cheaper and often faster.
+
+- **Image size still matters**: Even with 10GB available, cold starts increase with image size. Keep it lean.
+
+**Local testing limitations**: The local container won't have IAM permissions or VPC access. Test integration points separately. Stay tuned for a follow-up post on using [LocalStack](https://www.localstack.cloud/) for local integration work.
+
 ## Next Steps
 
 Now that you can package Lambda functions in containers, you have options:
