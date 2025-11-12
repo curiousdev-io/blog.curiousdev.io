@@ -55,12 +55,12 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/social-card.jpg',
+    image: 'img/banner.png',
     navbar: {
       title: 'Curious Dev',
       logo: {
         alt: 'Curious Dev Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {

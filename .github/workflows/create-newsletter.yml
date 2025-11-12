@@ -1,0 +1,267 @@
+name: Generate Newsletter Teaser
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'blog/**/*.md'
+
+jobs:
+  generate-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Get changed blog files
+        id: changed-files
+        run: |
+          NEW_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep '^blog/.*\.md$' || echo "")
+          if [ -z "$NEW_FILES" ]; then
+            echo "No new blog posts detected"
+            echo "has_new_posts=false" >> $GITHUB_OUTPUT
+          else
+            echo "New blog posts: $NEW_FILES"
+            echo "has_new_posts=true" >> $GITHUB_OUTPUT
+            FIRST_FILE=$(echo "$NEW_FILES" | head -n 1)
+            echo "blog_file=$FIRST_FILE" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate teaser email with Claude
+        if: steps.changed-files.outputs.has_new_posts == 'true'
+        run: |
+          npm install node-fetch
+          cat > generate-newsletter.js << 'SCRIPT_EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const fetch = require('node-fetch');
+          
+          function convertToHTML(plainText) {
+            return plainText
+              .split('\n\n')
+              .map(paragraph => paragraph.trim())
+              .filter(paragraph => paragraph.length > 0)
+              .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+              .join('\n');
+          }
+          
+          async function main() {
+            try {
+              const blogFile = process.env.BLOG_FILE;
+              console.log('Processing blog file:', blogFile);
+              
+              if (!fs.existsSync(blogFile)) {
+                console.error('Blog file not found:', blogFile);
+                process.exit(1);
+              }
+              
+              const blogContent = fs.readFileSync(blogFile, 'utf8');
+              
+              const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
+              const match = blogContent.match(frontmatterRegex);
+              
+              if (!match) {
+                console.error('No frontmatter found in file');
+                console.log('First 500 chars:', blogContent.substring(0, 500));
+                process.exit(1);
+              }
+              
+              const frontmatter = match[1];
+              const content = match[2] || '';
+              
+              const titleMatch = frontmatter.match(/^title:\s*(.+?)$/m);
+              const descMatch = frontmatter.match(/^description:\s*(.+?)$/m);
+              
+              let title = 'New Blog Post';
+              let description = '';
+              
+              if (titleMatch) {
+                title = titleMatch[1].replace(/^['"]|['"]$/g, '').trim();
+              }
+              
+              if (descMatch) {
+                description = descMatch[1].replace(/^['"]|['"]$/g, '').trim();
+              }
+              
+              const filename = path.basename(blogFile, '.md');
+              const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, '');
+              const blogUrl = `https://blog.curiousdev.io/${slug}`;
+              
+              console.log('Extracted title:', title);
+              console.log('Blog URL:', blogUrl);
+              
+              // Generate email content with improved prompt
+              const emailPrompt = "You are a newsletter writer for a technical blog called \"Curious Dev\" focused on AWS, Lambda, serverless, containers, and GenAI.\n\nI just published a new blog post. Here's the content:\n\nTitle: " + title + "\nDescription: " + description + "\n\nContent: " + content.substring(0, 3000) + "\n\nCreate an engaging email newsletter that:\n1. Opens with a friendly greeting\n2. Teases the blog post with curiosity-driven hooks (don't give away everything)\n3. Highlights 2-3 key takeaways or interesting points\n4. Includes a clear call-to-action to read the full post\n5. Maintains a conversational, authentic tone\n6. Is around 200-300 words\n7. Contains a friendly sign-off, always ending with \"Stay curious! 🚀\", newline, then \"- Brian\"\n\nThe email should make subscribers excited to click through and read more. Focus on the value they'll get, not just describing what the post is about.\n\nBlog post URL: " + blogUrl + "\n\nWrite ONLY the email body in plain text (no HTML). Do not include subject line.";
+              
+              console.log('Calling Claude API for email content...');
+              const emailResponse = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': process.env.ANTHROPIC_API_KEY,
+                  'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                  model: 'claude-3-sonnet-20240229',
+                  max_tokens: 2000,
+                  messages: [{
+                    role: 'user',
+                    content: emailPrompt
+                  }]
+                })
+              });
+              
+              if (!emailResponse.ok) {
+                const error = await emailResponse.text();
+                throw new Error(`Claude API error: ${emailResponse.status} - ${error}`);
+              }
+              
+              const emailData = await emailResponse.json();
+              const emailBody = emailData.content[0].text;
+              
+              fs.writeFileSync('generated-email.txt', emailBody);
+              console.log('✅ Email content generated');
+              
+              const subjectPrompt = "Create a compelling email subject line for this blog post: \"" + title + "\". Make it curiosity-driven and enticing. Max 60 characters. Don't use clickbait or emojis. Write ONLY the subject line, nothing else.";
+              
+              console.log('Calling Claude API for subject line...');
+              const subjectResponse = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': process.env.ANTHROPIC_API_KEY,
+                  'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                  model: 'claude-3-sonnet-20240229',
+                  max_tokens: 100,
+                  messages: [{
+                    role: 'user',
+                    content: subjectPrompt
+                  }]
+                })
+              });
+              
+              if (!subjectResponse.ok) {
+                const error = await subjectResponse.text();
+                throw new Error(`Claude API error: ${subjectResponse.status} - ${error}`);
+              }
+              
+              const subjectData = await subjectResponse.json();
+              const subject = subjectData.content[0].text.trim().replace(/^["']|["']$/g, '');
+              
+              fs.writeFileSync('generated-subject.txt', subject);
+              console.log('✅ Subject line generated:', subject);
+              
+              const metadata = {
+                title: title,
+                blogUrl: blogUrl,
+                slug: slug
+              };
+              fs.writeFileSync('blog-metadata.json', JSON.stringify(metadata, null, 2));
+              
+              console.log('✅ Email generation completed successfully');
+              
+            } catch (err) {
+              console.error('❌ Error:', err);
+              process.exit(1);
+            }
+          }
+          
+          main();
+          SCRIPT_EOF
+          
+          node generate-newsletter.js
+        env:
+          BLOG_FILE: ${{ steps.changed-files.outputs.blog_file }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Create Kit broadcast
+        if: steps.changed-files.outputs.has_new_posts == 'true'
+        run: |
+          cat > create-broadcast.js << 'SCRIPT_EOF'
+          const fs = require('fs');
+          const fetch = require('node-fetch');
+          
+          function convertToHTML(plainText) {
+            return plainText
+              .split('\n\n')
+              .map(paragraph => paragraph.trim())
+              .filter(paragraph => paragraph.length > 0)
+              .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+              .join('\n');
+          }
+          
+          async function createBroadcast() {
+            try {
+              const requiredFiles = ['generated-email.txt', 'generated-subject.txt', 'blog-metadata.json'];
+              for (const file of requiredFiles) {
+                if (!fs.existsSync(file)) {
+                  throw new Error(`Required file not found: ${file}`);
+                }
+              }
+              
+              const emailBody = fs.readFileSync('generated-email.txt', 'utf8');
+              const subject = fs.readFileSync('generated-subject.txt', 'utf8');
+              const metadata = JSON.parse(fs.readFileSync('blog-metadata.json', 'utf8'));
+              
+              // Convert to HTML for Kit
+              const htmlContent = convertToHTML(emailBody);
+              
+              console.log('Creating Kit broadcast...');
+              console.log('Subject:', subject);
+              console.log('Email length:', emailBody.length, 'characters');
+              console.log('HTML length:', htmlContent.length, 'characters');
+              
+              const payload = {
+                api_secret: process.env.CONVERTKIT_API_SECRET,
+                subject: subject,
+                content: htmlContent,
+                description: 'Newsletter for blog post: ' + metadata.title,
+                public: false
+              };
+              
+              const response = await fetch('https://api.convertkit.com/v3/broadcasts', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+              });
+              
+              const responseText = await response.text();
+              
+              if (!response.ok) {
+                console.error('Kit API Response:', responseText);
+                throw new Error('Kit API error: ' + response.status);
+              }
+              
+              const data = JSON.parse(responseText);
+              console.log('✅ Broadcast created successfully!');
+              console.log('📧 Subject:', subject);
+              console.log('🔗 Blog post:', metadata.blogUrl);
+              
+              if (data.broadcast && data.broadcast.id) {
+                console.log('📝 Review and send at: https://app.kit.com/campaigns/' + data.broadcast.id + '/draft');
+              }
+              
+            } catch (err) {
+              console.error('❌ Error creating broadcast:', err);
+              console.error('Error details:', err.message);
+              process.exit(1);
+            }
+          }
+          
+          createBroadcast();
+          SCRIPT_EOF
+          
+          node create-broadcast.js
+        env:
+          CONVERTKIT_API_SECRET: ${{ secrets.CONVERTKIT_API_SECRET }}
