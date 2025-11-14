@@ -61,7 +61,7 @@ RUN pip install --target ./packages -r requirements.txt && \
 ...
 ```
 
-Technically, this is all you need to have present in your Lambda image for it to work with the AWS Lambda service. However, like any good software developer, you'll want to build and test your application before deploying it to AWS. Let's review how to make that happen.
+Technically, this is all you need to have present in your Lambda image for it to work with the AWS Lambda service. However, like any good software developer, you'll want to build and test your application locally before deploying it to AWS. Let's review how to make that happen.
 
 ### Runtime Interface Emulator (RIE)
 
@@ -108,7 +108,7 @@ CMD ["lambda_function.handler"]
 
 ### Go
 
-There is a lot of reuse in the Go example's [Dockerfile](). I use a multi-stage build with two separate images. 
+There is a lot of reuse in the Go example's [Dockerfile](https://github.com/curiousdev-io/aws-lambda-container-images/blob/main/custom-images/go/Dockerfile). I use a multi-stage build with two separate images. 
 
 The RIE is downloaded directly from Github in the build stage.
 
@@ -141,6 +141,77 @@ CMD ["/entry.sh"]
 **NOTE:** In this case, the alpine runtime image has a shell that can be used.
 
 The steps to actually build and deploy the Go and Python functions are laid out in the [supporting Gihub repo curiousdev-io/aws-lambda-container-images](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main/custom-images). I won't repeat the steps here.
+
+## Local Experience
+
+We can locally invoke our Lambda functions now that the RIE is included in each of our repective container images.
+
+The `mise` task [local-build-and-invoke](https://github.com/curiousdev-io/aws-lambda-container-images/blob/main/custom-images/go/.config/mise/tasks/local-build-and-invoke) is just a wrapper to build the Docker image and start up my custom container using Docker.
+
+```bash
+✗ mise run local-build-and-invoke
+[local-build-and-invoke] $ ~/code/curiousdev-io/aws-lambda-container-images/custom-images/go/.config/mi…
+[create-image] $ ~/code/curiousdev-io/aws-lambda-container-images/custom-images/go/.config/mise/tasks/c…
+[*] Creating image...
+[+] Building 0.4s (27/27) FINISHED                                                 docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                               0.0s
+ => => transferring dockerfile: 987B                                                               0.0s
+ => [internal] load metadata for docker.io/library/alpine:3.22                                     0.2s
+ => [internal] load metadata for docker.io/library/golang:1.25-alpine                              0.2s
+ => [internal] load .dockerignore                                                                  0.0s
+ => => transferring context: 2B                                                                    0.0s
+ => [build  1/12] FROM docker.io/library/golang:1.25-alpine@sha256:d3f0cf7723f3429e3f9ed846243970  0.0s
+ => => resolve docker.io/library/golang:1.25-alpine@sha256:d3f0cf7723f3429e3f9ed846243970b20a2de7  0.0s
+ => [internal] load build context                                                                  0.0s
+ => => transferring context: 409B                                                                  0.0s
+ => [runtime 1/8] FROM docker.io/library/alpine:3.22@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be50  0.0s
+ => => resolve docker.io/library/alpine:3.22@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69  0.0s
+ => [build  9/12] ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/lates  0.2s
+ => CACHED [runtime 2/8] WORKDIR /var/task                                                         0.0s
+ => CACHED [build  2/12] WORKDIR /src                                                              0.0s
+ => CACHED [build  3/12] COPY go.mod go.sum ./                                                     0.0s
+ => CACHED [build  4/12] RUN go mod download                                                       0.0s
+ => CACHED [build  5/12] COPY internal/ ./internal/                                                0.0s
+ => CACHED [build  6/12] COPY cmd/ ./cmd/                                                          0.0s
+ => CACHED [build  7/12] RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-w -s" -o b  0.0s
+ => CACHED [build  8/12] RUN chmod +x bootstrap                                                    0.0s
+ => CACHED [build  9/12] ADD https://github.com/aws/aws-lambda-runtime-interface-emulator/release  0.0s
+ => CACHED [build 10/12] RUN chmod +x /tmp/aws-lambda-rie                                          0.0s
+ => CACHED [build 11/12] COPY entry.sh /tmp/entry.sh                                               0.0s
+ => CACHED [build 12/12] RUN chmod +x /tmp/entry.sh                                                0.0s
+ => CACHED [runtime 3/8] COPY --from=build /src/bootstrap /var/task                                0.0s
+ => CACHED [runtime 4/8] COPY --from=build /tmp/aws-lambda-rie /usr/local/bin/aws-lambda-rie       0.0s
+ => CACHED [runtime 5/8] COPY --from=build /tmp/entry.sh /entry.sh                                 0.0s
+ => CACHED [runtime 6/8] RUN chmod +x /usr/local/bin/aws-lambda-rie                                0.0s
+ => CACHED [runtime 7/8] RUN chmod +x bootstrap                                                    0.0s
+ => CACHED [runtime 8/8] RUN chmod +x /entry.sh                                                    0.0s
+ => exporting to image                                                                             0.0s
+ => => exporting layers                                                                            0.0s
+ => => exporting manifest sha256:19d2e0d77d765c2804100083b7c0ba5da5b2e5890b289f0000423d1404af5b7f  0.0s
+ => => exporting config sha256:1836c5cfba3726a95943c20610b0fce5229def66ecf3b3d88ac708d7a3eff2a4    0.0s
+ => => naming to docker.io/curiousdev-io/custom-go:1.25                                            0.0s
+ => => unpacking to docker.io/curiousdev-io/custom-go:1.25                                         0.0s
+[*] Docker image built successfully.
+[local-invoke] $ ~/code/curiousdev-io/aws-lambda-container-images/custom-images/go/.config/mise/tasks/l…
+[*] Starting a local instance of the function
+[*] Starting a new local instance on port 9000
+14 Nov 2025 15:55:46,908 [INFO] (rapid) exec '/var/task/bootstrap' (cwd=/var/task, handler=)
+[*] Invoking the function locally with /hello?name=Chris
+14 Nov 2025 15:55:49,792 [INFO] (rapid) INIT START(type: on-demand, phase: init)
+14 Nov 2025 15:55:49,794 [INFO] (rapid) The extension's directory "/opt/extensions" does not exist, assuming no extensions to be loaded.
+START RequestId: e429f482-bf29-4506-b5f1-f0dd1f77a69d Version: $LATEST
+14 Nov 2025 15:55:49,796 [INFO] (rapid) Starting runtime without AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN , Expected?: false
+14 Nov 2025 15:55:49,817 [INFO] (rapid) INIT RTDONE(status: success)
+14 Nov 2025 15:55:49,817 [INFO] (rapid) INIT REPORT(durationMs: 25.252000)
+14 Nov 2025 15:55:49,818 [INFO] (rapid) INVOKE START(requestId: b7816723-df27-414d-89aa-2cbd4514f37f)
+2025/11/14 15:55:49 INFO Lambda handler invoked path=/hello method=GET
+{"time":"2025-11-14T15:55:49.821160385Z","level":"INFO","msg":"request processed","path":"/hello","query":{"name":"Chris"},"status":200,"message":"Hello, Chris"}
+14 Nov 2025 15:55:49,824 [INFO] (rapid) INVOKE RTDONE(status: success, produced bytes: 0, duration: 5.873000ms)
+END RequestId: b7816723-df27-414d-89aa-2cbd4514f37f
+REPORT RequestId: b7816723-df27-414d-89aa-2cbd4514f37f  Init Duration: 0.51 ms  Duration: 32.39 ms     Billed Duration: 33 ms   Memory Size: 3008 MB    Max Memory Used: 3008 MB
+{"statusCode":200,"headers":{"Content-Type":"application/json"},"multiValueHeaders":null,"body":"{\"timestamp\":\"2025-11-14T15:55:49Z\",\"status\":200,\"message\":\"Hello, Chris\"}","cookies":null}
+[*] Local invocation completed successfully.
+```
 
 ## Things to Note
 
