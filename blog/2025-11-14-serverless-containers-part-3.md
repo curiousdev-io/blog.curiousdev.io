@@ -5,7 +5,7 @@ authors: [Brian]
 tags: [aws, lambda, container]
 ---
 
-You're a Docker pro - or you work in an environment that already has a well defined pipeline for building out containers. Let's look at how to incorporate custom images into your AWS Lambda workflows.
+You're a Docker pro - or maybe you just work somewhere with strong opinions about how containers should be built. Either way, let's talk about bringing your own container images to AWS Lambda.
 <!--truncate-->
 
 📦 Code Along: This post references a complete working example on [GitHub](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main). Clone it to follow along hands-on. There are Go and Python examples.
@@ -20,13 +20,13 @@ This post is a bit of a departure from the previous two posts. They focused on u
 
 ## Why Bother Building Your Own AWS Lambda Container Image?
 
-Why might we want to go this route when AWS already provides language-specific and OS-only images?
+Look, AWS already gives us language-specific and OS-only images. So why would you want to roll your own?
 
-Control.
+One word: **Control**.
 
-You may be a seasoned container developer who knows all the ins-and-outs of a Dockerfile and have optimized your workflow to quickly and reliably build containerized applications. Such control means you have the ability to specify what goes into and what stays out of your container image. There are two potential benefits - container size and security.
+Maybe you're a container ninja who's spent years perfecting your Dockerfile game. Or maybe your security team has _very specific ideas_ (read: requirements) about what belongs in a container image and what doesn't. There are two potential benefits to using custom images - container size and security.
 
-Your container size influences your function initialization time (i.e. cold start). You'll find a correlation between the number of bits and bytes the AWS Lambda service needs to shuffle around the length of your cold start. By taking control of your container image you can exclude things that aren't necessary to run your function. You likely won't need a full-blown operating system - why package your image like you'll need one? You can be surgical and **only** include what your function needs to run. You may also have an employer who has opinions (ok...requirements) about what should be included in and excluded from container images. You can reuse these images in AWS Lambda. 
+Your container size influences your function initialization time (i.e. cold start). You'll find a correlation between the number of bits and bytes the AWS Lambda service needs to shuffle around and the length of your cold start. By taking control of your container image you can exclude things that aren't necessary to run your function. You likely won't need a full-blown operating system - why package your image like you'll need one? You can be surgical and **only** include what your function needs to run. You may also have an employer who has opinions (ok...requirements) about what should be included in and excluded from container images. You can reuse these images in AWS Lambda. 
 
 The second potential benefit worth exploring is your security exposure. Remember - every package you include in an image is an potential attack vector. You have full control of what is included when packaging your own images. You can base container images that are designed to be minimal. [Chainguard](https://www.chainguard.dev/) follows the principle of distroless and has a number of container images available. [Google](https://github.com/GoogleContainerTools/distroless) also has a number of distroless container images.
 
@@ -38,7 +38,7 @@ There are really only a handful of items that need to be included in a container
 
 ### Runtime Interface Client (RIC)
 
-The RIC is a [set of software packages that implement the Lambda Runtime API](https://github.com/aws/aws-lambda-python-runtime-interface-client). It's the magic that allows your runtime to receive data from (i.e. events) and send data back to the the AWS Lambda service.
+The [RIC](https://github.com/aws/aws-lambda-python-runtime-interface-client) is basically the secret sauce that lets your code talk to the Lambda service. It's what allows your runtime to receive data from (i.e. events) and send data back to the the AWS Lambda service.
 
 The RIC is packaged by default in AWS provided base images (e.g. [python](https://gallery.ecr.aws/lambda/python), [node.js](https://gallery.ecr.aws/lambda/nodejs)). There is nothing special you need to do during the build process when you use these images. However, when you're building your own image, you'll need to include it.
 
@@ -61,7 +61,7 @@ RUN pip install --target ./packages -r requirements.txt && \
 ...
 ```
 
-Technically, this is all you need to have present in your Lambda image for it to work with the AWS Lambda service. However, like any good software developer, you'll want to build and test your application locally before deploying it to AWS. Let's review how to make that happen.
+Technically, you could stop here and your Lambda image would work with the AWS Lambda service. However, like any good software developer, you'll want to build and test your application locally before deploying it to AWS. Let's review how to make that happen.
 
 ### Runtime Interface Emulator (RIE)
 
@@ -221,6 +221,8 @@ In my example, I chose to build on minimalist images (Chainguard, Alpine). The s
 |:--------:|:-----------:|:----:|:----:|
 | Go | n/a | 42.40 MB | 11 MB |
 | Python | 185 MB | n/a | 40.86 MB|
+
+Yeah, you read that right - 11 MB for Go. That's not a typo. 🎯
 
 Consider building out your own custom images when there is a need for tighter control of container contents. A really nice likely side effect will be slimmer images.
 
