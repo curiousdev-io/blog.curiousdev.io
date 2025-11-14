@@ -50,7 +50,7 @@ I write for engineers who want to go beyond surface-level tutorials and really u
 I love hearing from readers! Whether you have questions, suggestions, or just want to share your own experiences, feel free to reach out.
 
 - **Blog**: [blog.curiousdev.io](https://blog.curiousdev.io)
-- **Email**: [brian at curiousdev.io](mailto:'brian-replace-at-with-@ curiousdev.io')
+- **Email**: brian at curiousdev.io
 - **GitHub**: [Curious Dev](https://github.com/curiousdev-io)
 - **LinkedIn**: [mcnamarabrian](https://linkedin.com/in/mcnamarabrian)
 
