@@ -162,6 +162,6 @@ Check out the [complete example repo](https://github.com/curiousdev-io/aws-lambd
 
 - AWS SAM template configuration
 
-In Part 3 of the series, I'll show how to build a containerized Lambda function using a non-AWS base image.
+In [Part 3](/aws-lambda-container-images-part-3-custom-image-for-lambda) of the series, I'll show how to build a containerized Lambda function using a non-AWS base image.
 
 Stay curious! 🚀

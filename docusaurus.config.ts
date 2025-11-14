@@ -64,6 +64,11 @@ const config: Config = {
       },
       items: [
         {
+          to: '/about',
+          label: 'About Me',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/curiousdev/blog.curiousdev.io',
           label: 'GitHub',
           position: 'right',
@@ -74,7 +79,7 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'About Me',
+          title: 'Links',
           items: [
             {
               label: 'GitHub',
