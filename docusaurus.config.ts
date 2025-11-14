@@ -44,11 +44,13 @@ const config: Config = {
               });
             },
           },
-          editUrl:
-            'https://github.com/curiousdev-io/blog.curiousdev.io/tree/main/',
         },
         theme: {
           customCss: './src/css/custom.css',
+        },
+        gtag: {
+          trackingID: 'G-SCLXTFK4J9',
+          anonymizeIP: true,
         },
       } satisfies Preset.Options,
     ],
@@ -66,11 +68,6 @@ const config: Config = {
         {
           to: '/about',
           label: 'About Me',
-          position: 'right',
-        },
-        {
-          href: 'https://github.com/curiousdev/blog.curiousdev.io',
-          label: 'GitHub',
           position: 'right',
         },
       ],
