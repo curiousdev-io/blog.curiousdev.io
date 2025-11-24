@@ -106,7 +106,7 @@ jobs:
               
               const filename = path.basename(blogFile, '.md');
               const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, '');
-              const blogUrl = `https://blog.curiousdev.io/${slug}`;
+              const blogUrl = 'https://blog.curiousdev.io/' + slug;
               
               console.log('Extracted title:', title);
               console.log('Blog URL:', blogUrl);
@@ -116,29 +116,22 @@ jobs:
                 apiKey: process.env.ANTHROPIC_API_KEY,
               });
               
-              const emailPrompt = `You are a newsletter writer for a technical blog called "Curious Dev" focused on AWS, Lambda, serverless, containers, and GenAI.
-
-I just published a new blog post. Here's the content:
-
-Title: ${title}
-Description: ${description}
-
-Content: ${content.substring(0, 3000)}
-
-Create an engaging email newsletter that:
-1. Opens with a friendly greeting
-2. Teases the blog post with curiosity-driven hooks (don't give away everything)
-3. Highlights 2-3 key takeaways or interesting points
-4. Includes a clear call-to-action to read the full post
-5. Maintains a conversational, authentic tone
-6. Is around 200-300 words
-7. Contains a friendly sign-off, always ending with "Stay curious! 🚀", newline, then "- Brian"
-
-The email should make subscribers excited to click through and read more. Focus on the value they'll get, not just describing what the post is about.
-
-Blog post URL: ${blogUrl}
-
-Write ONLY the email body in plain text (no HTML). Do not include subject line.`;
+              const emailPrompt = 'You are a newsletter writer for a technical blog called "Curious Dev" focused on AWS, Lambda, serverless, containers, and GenAI.\n\n' +
+                'I just published a new blog post. Here is the content:\n\n' +
+                'Title: ' + title + '\n' +
+                'Description: ' + description + '\n\n' +
+                'Content: ' + content.substring(0, 3000) + '\n\n' +
+                'Create an engaging email newsletter that:\n' +
+                '1. Opens with a friendly greeting\n' +
+                '2. Teases the blog post with curiosity-driven hooks (do not give away everything)\n' +
+                '3. Highlights 2-3 key takeaways or interesting points\n' +
+                '4. Includes a clear call-to-action to read the full post\n' +
+                '5. Maintains a conversational, authentic tone\n' +
+                '6. Is around 200-300 words\n' +
+                '7. Contains a friendly sign-off, always ending with "Stay curious! 🚀", newline, then "- Brian"\n\n' +
+                'The email should make subscribers excited to click through and read more. Focus on the value they will get, not just describing what the post is about.\n\n' +
+                'Blog post URL: ' + blogUrl + '\n\n' +
+                'Write ONLY the email body in plain text (no HTML). Do not include subject line.';
               
               console.log('Calling Claude API for email content...');
               const emailMessage = await anthropic.messages.create({
@@ -155,7 +148,7 @@ Write ONLY the email body in plain text (no HTML). Do not include subject line.`
               fs.writeFileSync('generated-email.txt', emailBody);
               console.log('✅ Email content generated');
               
-              const subjectPrompt = `Create a compelling email subject line for this blog post: "${title}". Make it curiosity-driven and enticing. Max 60 characters. Don't use clickbait or emojis. Write ONLY the subject line, nothing else.`;
+              const subjectPrompt = 'Create a compelling email subject line for this blog post: "' + title + '". Make it curiosity-driven and enticing. Max 60 characters. Do not use clickbait or emojis. Write ONLY the subject line, nothing else.';
               
               console.log('Calling Claude API for subject line...');
               const subjectMessage = await anthropic.messages.create({
