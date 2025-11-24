@@ -5,6 +5,8 @@ authors: [Brian]
 tags: [aws, lambda, container]
 ---
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 You're a Docker pro - or maybe you just work somewhere with strong opinions about how containers should be built. Either way, let's talk about bringing your own container images to AWS Lambda.
 <!--truncate-->
 

@@ -5,6 +5,8 @@ authors: [Brian]
 tags: [aws, lambda, container]
 ---
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 Your Lambda function just hit the 250MB unzipped size limit.
 
 Again.

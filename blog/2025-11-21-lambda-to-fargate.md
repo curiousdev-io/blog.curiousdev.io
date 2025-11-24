@@ -5,6 +5,8 @@ authors: [Brian]
 tags: [aws, lambda, fargate, container]
 ---
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 You've bought in to using containers to package AWS Lambda functions but now you're curious...
 
 If you had to, could you migrate that same function to AWS Fargate?

@@ -5,6 +5,8 @@ authors: [Brian]
 tags: [aws, lambda, container]
 ---
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 You're a Go (or Rust) developer and you're really looking forward to deploying your awesome Lambda application in a OS-only container. Let's look at how to do it.
 <!--truncate-->
 
