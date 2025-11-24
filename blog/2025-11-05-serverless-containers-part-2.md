@@ -10,7 +10,6 @@ You're a Go (or Rust) developer and you're really looking forward to deploying y
 
 <script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
 
-
 📦 Code Along: This post references a complete working example on [GitHub](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main). Clone it to follow along hands-on.
 
 ## Brief Review

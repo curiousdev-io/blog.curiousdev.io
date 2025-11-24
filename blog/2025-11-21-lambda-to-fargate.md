@@ -12,7 +12,6 @@ If you had to, could you migrate that same function to AWS Fargate?
 
 <script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
 
-
 📦 Code Along: This post references a complete working example on [GitHub](https://github.com/curiousdev-io/lambda-to-fargate/tree/main). Clone it to follow along hands-on. There are Go and Python examples.
 
 I had a theory: if I keep my business logic separate from infrastructure code, switching from Lambda to Fargate should be trivial. So I built the same API twice — once for Lambda, once for Fargate — using the same container image.
@@ -321,7 +320,7 @@ The only difference? How we start the container.
 
 Look, I'm not saying you should run out and migrate everything to Fargate. Lambda is great for most workloads. But there are real scenarios where this flexibility matters:
 
-* Your Lambda bill crosses $5k/month on continuous workloads  
+* Your Lambda spend stops making sense on continuous workloads  
 * You hit the 15-minute execution limit on batch jobs  
 * Cold starts are killing your p99 latency  
 * You need persistent WebSocket connections

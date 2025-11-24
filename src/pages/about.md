@@ -3,6 +3,8 @@ title: About
 description: Learn more about Brian and the CuriousDev blog
 ---
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 # About Me
 
 Hey there! I'm Brian, a senior technologist with a passion for serverless technologies and cloud infrastructure optimization. In general, I love learning and will capture lessons I'm learning along the way.
