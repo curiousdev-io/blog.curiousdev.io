@@ -10,7 +10,6 @@ You're a Docker pro - or maybe you just work somewhere with strong opinions abou
 
 <script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
 
-
 📦 Code Along: This post references a complete working example on [GitHub](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main). Clone it to follow along hands-on. There are Go and Python examples.
 
 ## Brief Review
