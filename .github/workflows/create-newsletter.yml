@@ -8,6 +8,9 @@ on:
       - 'blog/**/*.md'
   workflow_dispatch:
 
+env:
+  CLAUDE_MODEL: 'claude-3-5-sonnet-20241022'  # Define once at workflow level
+
 jobs:
   generate-and-send:
     runs-on: ubuntu-latest
@@ -20,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Changed from 18 to 20
+          node-version: '20'
 
       - name: Get changed blog files
         id: changed-files
@@ -63,7 +66,10 @@ jobs:
           async function main() {
             try {
               const blogFile = process.env.BLOG_FILE;
+              const claudeModel = process.env.CLAUDE_MODEL;
+              
               console.log('Processing blog file:', blogFile);
+              console.log('Using Claude model:', claudeModel);
               
               if (!fs.existsSync(blogFile)) {
                 console.error('Blog file not found:', blogFile);
@@ -116,7 +122,7 @@ jobs:
                   'anthropic-version': '2023-06-01'
                 },
                 body: JSON.stringify({
-                  model: 'claude-3-sonnet-20240229',
+                  model: claudeModel,
                   max_tokens: 2000,
                   messages: [{
                     role: 'user',
@@ -147,7 +153,7 @@ jobs:
                   'anthropic-version': '2023-06-01'
                 },
                 body: JSON.stringify({
-                  model: 'claude-3-sonnet-20240229',
+                  model: claudeModel,
                   max_tokens: 100,
                   messages: [{
                     role: 'user',
@@ -189,6 +195,7 @@ jobs:
         env:
           BLOG_FILE: ${{ steps.changed-files.outputs.blog_file }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: ${{ env.CLAUDE_MODEL }}
 
       - name: Create Kit broadcast
         if: steps.changed-files.outputs.has_new_posts == 'true'
@@ -268,6 +275,6 @@ jobs:
           createBroadcast();
           SCRIPT_EOF
           
-          node create-broadcast.jsast.js
+          node create-broadcast.js
         env:
           CONVERTKIT_API_SECRET: ${{ secrets.CONVERTKIT_API_SECRET }}
