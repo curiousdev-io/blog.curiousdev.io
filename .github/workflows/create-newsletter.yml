@@ -4,7 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'blog/**/*.md'
+      - 'blog/*.md'  # Fixed pattern
+      - 'blog/**/*.md'  # Also check subdirectories
+  workflow_dispatch:  # Allow manual trigger for testing
 
 jobs:
   generate-and-send:
@@ -13,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 2  # Need at least 2 commits for diff
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -23,15 +25,22 @@ jobs:
       - name: Get changed blog files
         id: changed-files
         run: |
-          NEW_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep '^blog/.*\.md$' || echo "")
+          echo "Checking for new or modified blog posts..."
+          
+          # Use AM filter: A=added, M=modified
+          NEW_FILES=$(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '^blog/.*\.md$' || echo "")
+          
           if [ -z "$NEW_FILES" ]; then
-            echo "No new blog posts detected"
+            echo "No new or modified blog posts detected"
+            echo "Files changed in last commit:"
+            git diff --name-only HEAD^ HEAD
             echo "has_new_posts=false" >> $GITHUB_OUTPUT
           else
-            echo "New blog posts: $NEW_FILES"
+            echo "✅ Detected blog posts: $NEW_FILES"
             echo "has_new_posts=true" >> $GITHUB_OUTPUT
             FIRST_FILE=$(echo "$NEW_FILES" | head -n 1)
             echo "blog_file=$FIRST_FILE" >> $GITHUB_OUTPUT
+            echo "📝 Processing: $FIRST_FILE"
           fi
 
       - name: Generate teaser email with Claude
