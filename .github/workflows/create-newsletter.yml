@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  CLAUDE_MODEL: 'claude-3-5-sonnet-20241022'  # Define once at workflow level
+  CLAUDE_MODEL: 'claude-3-5-sonnet-latest'
 
 jobs:
   generate-and-send:
