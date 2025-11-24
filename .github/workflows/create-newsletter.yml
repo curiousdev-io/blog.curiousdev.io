@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  CLAUDE_MODEL: 'claude-3-5-sonnet-20241022'
+  CLAUDE_MODEL: 'claude-3-7-sonnet-latest' # Model list https://github.com/anthropics/anthropic-sdk-typescript/blob/0cc9ef72d121dcd22428265563e0348a69d52706/src/resources/messages/messages.ts#L560
 
 jobs:
   generate-and-send:
