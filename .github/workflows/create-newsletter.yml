@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'blog/*.md'  # Fixed pattern
-      - 'blog/**/*.md'  # Also check subdirectories
-  workflow_dispatch:  # Allow manual trigger for testing
+      - 'blog/*.md'
+      - 'blog/**/*.md'
+  workflow_dispatch:
 
 jobs:
   generate-and-send:
@@ -15,19 +15,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Need at least 2 commits for diff
+          fetch-depth: 2
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'  # Changed from 18 to 20
 
       - name: Get changed blog files
         id: changed-files
         run: |
           echo "Checking for new or modified blog posts..."
           
-          # Use AM filter: A=added, M=modified
           NEW_FILES=$(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '^blog/.*\.md$' || echo "")
           
           if [ -z "$NEW_FILES" ]; then
@@ -46,7 +45,7 @@ jobs:
       - name: Generate teaser email with Claude
         if: steps.changed-files.outputs.has_new_posts == 'true'
         run: |
-          npm install node-fetch
+          npm install node-fetch@2
           cat > generate-newsletter.js << 'SCRIPT_EOF'
           const fs = require('fs');
           const path = require('path');
@@ -106,7 +105,6 @@ jobs:
               console.log('Extracted title:', title);
               console.log('Blog URL:', blogUrl);
               
-              // Generate email content with improved prompt
               const emailPrompt = "You are a newsletter writer for a technical blog called \"Curious Dev\" focused on AWS, Lambda, serverless, containers, and GenAI.\n\nI just published a new blog post. Here's the content:\n\nTitle: " + title + "\nDescription: " + description + "\n\nContent: " + content.substring(0, 3000) + "\n\nCreate an engaging email newsletter that:\n1. Opens with a friendly greeting\n2. Teases the blog post with curiosity-driven hooks (don't give away everything)\n3. Highlights 2-3 key takeaways or interesting points\n4. Includes a clear call-to-action to read the full post\n5. Maintains a conversational, authentic tone\n6. Is around 200-300 words\n7. Contains a friendly sign-off, always ending with \"Stay curious! 🚀\", newline, then \"- Brian\"\n\nThe email should make subscribers excited to click through and read more. Focus on the value they'll get, not just describing what the post is about.\n\nBlog post URL: " + blogUrl + "\n\nWrite ONLY the email body in plain text (no HTML). Do not include subject line.";
               
               console.log('Calling Claude API for email content...');
@@ -221,7 +219,6 @@ jobs:
               const subject = fs.readFileSync('generated-subject.txt', 'utf8');
               const metadata = JSON.parse(fs.readFileSync('blog-metadata.json', 'utf8'));
               
-              // Convert to HTML for Kit
               const htmlContent = convertToHTML(emailBody);
               
               console.log('Creating Kit broadcast...');
@@ -271,6 +268,6 @@ jobs:
           createBroadcast();
           SCRIPT_EOF
           
-          node create-broadcast.js
+          node create-broadcast.jsast.js
         env:
           CONVERTKIT_API_SECRET: ${{ secrets.CONVERTKIT_API_SECRET }}
