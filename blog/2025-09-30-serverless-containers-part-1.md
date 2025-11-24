@@ -5,8 +5,6 @@ authors: [Brian]
 tags: [aws, lambda, container]
 ---
 
-<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
-
 Your Lambda function just hit the 250MB unzipped size limit.
 
 Again.
@@ -16,6 +14,8 @@ You're wrestling with Layers and code dependencies, wondering if there's a bette
 There is — and it might surprise you how simple container packaging makes this problem disappear.
 
 <!--truncate-->
+
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
 
 📦 Code Along: This post references a complete working example on [GitHub](https://github.com/curiousdev-io/aws-lambda-container-images/tree/main). Clone it to follow along hands-on.
 
