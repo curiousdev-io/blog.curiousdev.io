@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  CLAUDE_MODEL: 'claude-3-5-sonnet-latest'
+  CLAUDE_MODEL: 'claude-3-5-sonnet-20241022'
 
 jobs:
   generate-and-send:
@@ -48,11 +48,11 @@ jobs:
       - name: Generate teaser email with Claude
         if: steps.changed-files.outputs.has_new_posts == 'true'
         run: |
-          npm install node-fetch@2
+          npm install @anthropic-ai/sdk
           cat > generate-newsletter.js << 'SCRIPT_EOF'
           const fs = require('fs');
           const path = require('path');
-          const fetch = require('node-fetch');
+          const Anthropic = require('@anthropic-ai/sdk');
           
           function convertToHTML(plainText) {
             return plainText
@@ -111,64 +111,63 @@ jobs:
               console.log('Extracted title:', title);
               console.log('Blog URL:', blogUrl);
               
-              const emailPrompt = "You are a newsletter writer for a technical blog called \"Curious Dev\" focused on AWS, Lambda, serverless, containers, and GenAI.\n\nI just published a new blog post. Here's the content:\n\nTitle: " + title + "\nDescription: " + description + "\n\nContent: " + content.substring(0, 3000) + "\n\nCreate an engaging email newsletter that:\n1. Opens with a friendly greeting\n2. Teases the blog post with curiosity-driven hooks (don't give away everything)\n3. Highlights 2-3 key takeaways or interesting points\n4. Includes a clear call-to-action to read the full post\n5. Maintains a conversational, authentic tone\n6. Is around 200-300 words\n7. Contains a friendly sign-off, always ending with \"Stay curious! 🚀\", newline, then \"- Brian\"\n\nThe email should make subscribers excited to click through and read more. Focus on the value they'll get, not just describing what the post is about.\n\nBlog post URL: " + blogUrl + "\n\nWrite ONLY the email body in plain text (no HTML). Do not include subject line.";
-              
-              console.log('Calling Claude API for email content...');
-              const emailResponse = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'x-api-key': process.env.ANTHROPIC_API_KEY,
-                  'anthropic-version': '2023-06-01'
-                },
-                body: JSON.stringify({
-                  model: claudeModel,
-                  max_tokens: 2000,
-                  messages: [{
-                    role: 'user',
-                    content: emailPrompt
-                  }]
-                })
+              // Initialize Anthropic client
+              const anthropic = new Anthropic({
+                apiKey: process.env.ANTHROPIC_API_KEY,
               });
               
-              if (!emailResponse.ok) {
-                const error = await emailResponse.text();
-                throw new Error(`Claude API error: ${emailResponse.status} - ${error}`);
-              }
+              const emailPrompt = `You are a newsletter writer for a technical blog called "Curious Dev" focused on AWS, Lambda, serverless, containers, and GenAI.
+
+I just published a new blog post. Here's the content:
+
+Title: ${title}
+Description: ${description}
+
+Content: ${content.substring(0, 3000)}
+
+Create an engaging email newsletter that:
+1. Opens with a friendly greeting
+2. Teases the blog post with curiosity-driven hooks (don't give away everything)
+3. Highlights 2-3 key takeaways or interesting points
+4. Includes a clear call-to-action to read the full post
+5. Maintains a conversational, authentic tone
+6. Is around 200-300 words
+7. Contains a friendly sign-off, always ending with "Stay curious! 🚀", newline, then "- Brian"
+
+The email should make subscribers excited to click through and read more. Focus on the value they'll get, not just describing what the post is about.
+
+Blog post URL: ${blogUrl}
+
+Write ONLY the email body in plain text (no HTML). Do not include subject line.`;
               
-              const emailData = await emailResponse.json();
-              const emailBody = emailData.content[0].text;
+              console.log('Calling Claude API for email content...');
+              const emailMessage = await anthropic.messages.create({
+                model: claudeModel,
+                max_tokens: 2000,
+                messages: [{
+                  role: 'user',
+                  content: emailPrompt
+                }]
+              });
+              
+              const emailBody = emailMessage.content[0].text;
               
               fs.writeFileSync('generated-email.txt', emailBody);
               console.log('✅ Email content generated');
               
-              const subjectPrompt = "Create a compelling email subject line for this blog post: \"" + title + "\". Make it curiosity-driven and enticing. Max 60 characters. Don't use clickbait or emojis. Write ONLY the subject line, nothing else.";
+              const subjectPrompt = `Create a compelling email subject line for this blog post: "${title}". Make it curiosity-driven and enticing. Max 60 characters. Don't use clickbait or emojis. Write ONLY the subject line, nothing else.`;
               
               console.log('Calling Claude API for subject line...');
-              const subjectResponse = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'x-api-key': process.env.ANTHROPIC_API_KEY,
-                  'anthropic-version': '2023-06-01'
-                },
-                body: JSON.stringify({
-                  model: claudeModel,
-                  max_tokens: 100,
-                  messages: [{
-                    role: 'user',
-                    content: subjectPrompt
-                  }]
-                })
+              const subjectMessage = await anthropic.messages.create({
+                model: claudeModel,
+                max_tokens: 100,
+                messages: [{
+                  role: 'user',
+                  content: subjectPrompt
+                }]
               });
               
-              if (!subjectResponse.ok) {
-                const error = await subjectResponse.text();
-                throw new Error(`Claude API error: ${subjectResponse.status} - ${error}`);
-              }
-              
-              const subjectData = await subjectResponse.json();
-              const subject = subjectData.content[0].text.trim().replace(/^["']|["']$/g, '');
+              const subject = subjectMessage.content[0].text.trim().replace(/^["']|["']$/g, '');
               
               fs.writeFileSync('generated-subject.txt', subject);
               console.log('✅ Subject line generated:', subject);
@@ -184,6 +183,12 @@ jobs:
               
             } catch (err) {
               console.error('❌ Error:', err);
+              if (err.status) {
+                console.error('API Status:', err.status);
+              }
+              if (err.error) {
+                console.error('API Error:', JSON.stringify(err.error, null, 2));
+              }
               process.exit(1);
             }
           }
@@ -200,6 +205,7 @@ jobs:
       - name: Create Kit broadcast
         if: steps.changed-files.outputs.has_new_posts == 'true'
         run: |
+          npm install node-fetch@2
           cat > create-broadcast.js << 'SCRIPT_EOF'
           const fs = require('fs');
           const fetch = require('node-fetch');
