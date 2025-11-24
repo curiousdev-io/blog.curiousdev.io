@@ -10,7 +10,6 @@ You've bought in to using containers to package AWS Lambda functions but now you
 If you had to, could you migrate that same function to AWS Fargate?
 <!--truncate-->
 
-
 <script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
 
 📦 Code Along: This post references a complete working example on [GitHub](https://github.com/curiousdev-io/lambda-to-fargate/tree/main). Clone it to follow along hands-on. There are Go and Python examples.
