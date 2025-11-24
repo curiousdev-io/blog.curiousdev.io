@@ -14,7 +14,7 @@ Hey there! I'm Brian, a senior technologist with a passion for serverless techno
 I work at a large enterprise where I focus on:
 
 - **AWS Lambda development and optimization** - Building efficient serverless applications and helping teams make the most of Lambda's capabilities
-- **Cloud infrastructure** - Designing and implementing scalable solutions across hundreds of AWS accounts
+- **Cloud infrastructure** - Designing and implementing scalable solutions for large scale cloud adoption
 - **Developer experience** - Creating tools and frameworks that make developers' lives easier
 - **Serverless Cost optimization** - Finding ways to run cloud infrastructure more efficiently without sacrificing performance
 - **Serverless operations** - Sharing techniques for operating serverless applications
