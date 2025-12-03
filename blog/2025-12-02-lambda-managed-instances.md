@@ -5,7 +5,7 @@ authors: [Brian]
 tags: [aws, lambda, managed-instances]
 ---
 
-You've optimized your Lambda functions six ways from Sunday, but costs are still eating your budget. AWS AWS LMI might help.
+You've optimized your Lambda functions six ways from Sunday, but costs are still eating your budget. AWS LMI might help.
 
 <!--truncate-->
 
