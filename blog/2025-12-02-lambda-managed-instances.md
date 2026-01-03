@@ -17,7 +17,7 @@ What changes with this new option?
 
 The operational model stays familiar - functions are still triggered by events - but the configuration complexity increases significantly.
 
-In this post we'll look at what AWS LMI is and how you should consider it as a tool in your serverless toolbelt. Part 2 will cover cost-analysis. Part 3 will look at specific runtime considerations when using AWS LMI.
+In this post we'll look at what AWS LMI is and how you should consider it as a tool in your serverless toolbelt. [Part 2](/aws-lambda-managed-instances-part-2-cost) will cover cost-analysis. Part 3 will look at specific runtime considerations when using AWS LMI.
 
 ## What is AWS LMI?
 
