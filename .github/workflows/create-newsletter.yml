@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  CLAUDE_MODEL: 'claude-sonnet-4-5' # Model list https://github.com/anthropics/anthropic-sdk-typescript/blob/0cc9ef72d121dcd22428265563e0348a69d52706/src/resources/messages/messages.ts#L560
+  CLAUDE_MODEL: 'claude-opus-4-6' # Model status https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status
 
 jobs:
   generate-and-send:
