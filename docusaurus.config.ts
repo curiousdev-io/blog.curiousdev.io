@@ -61,6 +61,19 @@ const config: Config = {
     ],
   ],
 
+  themes: [
+    [
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        hashed: true,
+        blogRouteBasePath: '/',
+        indexBlog: true,
+        indexDocs: false,
+        indexPages: false,
+      },
+    ],
+  ],
+
   themeConfig: {
     image: 'img/banner.png',
     navbar: {
