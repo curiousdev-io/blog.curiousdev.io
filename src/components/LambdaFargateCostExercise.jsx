@@ -90,54 +90,63 @@ const DURATION_OPTIONS = [50, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 30
 // Fargate vCPU/Memory combinations - curated for Lambda comparison
 // Only including configs up to 4 vCPU since Lambda maxes at ~6 vCPU (10,240 MB)
 const FARGATE_CONFIGS = [
-    { vcpu: 0.25, memory: 0.5, label: '0.25 vCPU, 0.5 GB', lambdaEquivalent: true },
-    { vcpu: 0.25, memory: 1, label: '0.25 vCPU, 1 GB', lambdaEquivalent: true },
-    { vcpu: 0.25, memory: 2, label: '0.25 vCPU, 2 GB', lambdaEquivalent: false },
-    { vcpu: 0.5, memory: 1, label: '0.5 vCPU, 1 GB', lambdaEquivalent: true },
-    { vcpu: 0.5, memory: 2, label: '0.5 vCPU, 2 GB', lambdaEquivalent: true },
-    { vcpu: 0.5, memory: 3, label: '0.5 vCPU, 3 GB', lambdaEquivalent: false },
-    { vcpu: 0.5, memory: 4, label: '0.5 vCPU, 4 GB', lambdaEquivalent: false },
-    { vcpu: 1, memory: 2, label: '1 vCPU, 2 GB', lambdaEquivalent: true },
-    { vcpu: 1, memory: 3, label: '1 vCPU, 3 GB', lambdaEquivalent: true },
-    { vcpu: 1, memory: 4, label: '1 vCPU, 4 GB', lambdaEquivalent: false },
-    { vcpu: 1, memory: 5, label: '1 vCPU, 5 GB', lambdaEquivalent: false },
-    { vcpu: 1, memory: 6, label: '1 vCPU, 6 GB', lambdaEquivalent: false },
-    { vcpu: 2, memory: 4, label: '2 vCPU, 4 GB', lambdaEquivalent: true },
-    { vcpu: 2, memory: 5, label: '2 vCPU, 5 GB', lambdaEquivalent: false },
-    { vcpu: 2, memory: 6, label: '2 vCPU, 6 GB', lambdaEquivalent: true },
-    { vcpu: 2, memory: 8, label: '2 vCPU, 8 GB', lambdaEquivalent: true },
-    { vcpu: 4, memory: 8, label: '4 vCPU, 8 GB', lambdaEquivalent: true },
-    { vcpu: 4, memory: 12, label: '4 vCPU, 12 GB', lambdaEquivalent: true },
-    { vcpu: 4, memory: 16, label: '4 vCPU, 16 GB', lambdaEquivalent: true },
-    { vcpu: 4, memory: 20, label: '4 vCPU, 20 GB', lambdaEquivalent: true },
-    { vcpu: 4, memory: 30, label: '4 vCPU, 30 GB', lambdaEquivalent: false },
+    { vcpu: 0.25, memory: 0.5, label: '0.25 vCPU, 0.5 GB' },
+    { vcpu: 0.25, memory: 1, label: '0.25 vCPU, 1 GB' },
+    { vcpu: 0.25, memory: 2, label: '0.25 vCPU, 2 GB' },
+    { vcpu: 0.5, memory: 1, label: '0.5 vCPU, 1 GB' },
+    { vcpu: 0.5, memory: 2, label: '0.5 vCPU, 2 GB' },
+    { vcpu: 0.5, memory: 3, label: '0.5 vCPU, 3 GB' },
+    { vcpu: 0.5, memory: 4, label: '0.5 vCPU, 4 GB' },
+    { vcpu: 1, memory: 2, label: '1 vCPU, 2 GB' },
+    { vcpu: 1, memory: 3, label: '1 vCPU, 3 GB' },
+    { vcpu: 1, memory: 4, label: '1 vCPU, 4 GB' },
+    { vcpu: 1, memory: 5, label: '1 vCPU, 5 GB' },
+    { vcpu: 1, memory: 6, label: '1 vCPU, 6 GB' },
+    { vcpu: 1, memory: 7, label: '1 vCPU, 7 GB' },
+    { vcpu: 1, memory: 8, label: '1 vCPU, 8 GB' },
+    { vcpu: 2, memory: 4, label: '2 vCPU, 4 GB' },
+    { vcpu: 2, memory: 5, label: '2 vCPU, 5 GB' },
+    { vcpu: 2, memory: 6, label: '2 vCPU, 6 GB' },
+    { vcpu: 2, memory: 8, label: '2 vCPU, 8 GB' },
+    { vcpu: 2, memory: 10, label: '2 vCPU, 10 GB' },
+    { vcpu: 2, memory: 16, label: '2 vCPU, 16 GB' },
+    { vcpu: 4, memory: 8, label: '4 vCPU, 8 GB' },
+    { vcpu: 4, memory: 12, label: '4 vCPU, 12 GB' },
+    { vcpu: 4, memory: 16, label: '4 vCPU, 16 GB' },
+    { vcpu: 4, memory: 20, label: '4 vCPU, 20 GB' },
+    { vcpu: 4, memory: 30, label: '4 vCPU, 30 GB' },
+    { vcpu: 8, memory: 16, label: '8 vCPU, 16 GB' },
+    { vcpu: 8, memory: 20, label: '8 vCPU, 20 GB' },
+    { vcpu: 8, memory: 32, label: '8 vCPU, 32 GB' },
+    { vcpu: 8, memory: 60, label: '8 vCPU, 60 GB' },
 ];
 
-// Lambda memory to Fargate config mapping (based on ~1,769 MB = 1 vCPU)
+// Lambda memory to Fargate config mapping (memory-based parity)
+// Maps each Lambda size to the smallest Fargate config whose memory meets or
+// exceeds the Lambda allocation, using the smallest vCPU tier that supports it.
 const LAMBDA_TO_FARGATE_MAP = {
-    128: { vcpu: 0.25, memory: 0.5 },   // 0.07 vCPU
-    256: { vcpu: 0.25, memory: 0.5 },   // 0.14 vCPU
-    512: { vcpu: 0.25, memory: 1 },     // 0.29 vCPU
-    768: { vcpu: 0.5, memory: 1 },      // 0.43 vCPU
-    1024: { vcpu: 0.5, memory: 2 },     // 0.58 vCPU
-    1536: { vcpu: 1, memory: 2 },       // 0.87 vCPU
-    2048: { vcpu: 1, memory: 3 },       // 1.16 vCPU
-    3008: { vcpu: 2, memory: 4 },       // 1.70 vCPU
-    4096: { vcpu: 2, memory: 6 },       // 2.32 vCPU
-    5120: { vcpu: 2, memory: 8 },       // 2.90 vCPU
-    6144: { vcpu: 4, memory: 8 },       // 3.47 vCPU
-    7168: { vcpu: 4, memory: 12 },      // 4.05 vCPU
-    8192: { vcpu: 4, memory: 16 },      // 4.63 vCPU
-    10240: { vcpu: 4, memory: 20 },     // 5.79 vCPU (Fargate max is 4 vCPU for most configs)
+    128: { vcpu: 0.25, memory: 0.5 },   // 0.125 GB → 0.25 vCPU / 0.5 GB (tier min)
+    256: { vcpu: 0.25, memory: 0.5 },   // 0.25 GB  → 0.25 vCPU / 0.5 GB (tier min)
+    512: { vcpu: 0.25, memory: 0.5 },   // 0.5 GB   → 0.25 vCPU / 0.5 GB
+    768: { vcpu: 0.25, memory: 1 },     // 0.75 GB  → 0.25 vCPU / 1 GB
+    1024: { vcpu: 0.25, memory: 1 },    // 1 GB     → 0.25 vCPU / 1 GB
+    1536: { vcpu: 0.25, memory: 2 },    // 1.5 GB   → 0.25 vCPU / 2 GB
+    2048: { vcpu: 0.5, memory: 2 },     // 2 GB     → 0.5 vCPU / 2 GB
+    3008: { vcpu: 0.5, memory: 3 },     // ~3 GB    → 0.5 vCPU / 3 GB
+    4096: { vcpu: 0.5, memory: 4 },     // 4 GB     → 0.5 vCPU / 4 GB
+    5120: { vcpu: 1, memory: 5 },       // 5 GB     → 1 vCPU / 5 GB
+    6144: { vcpu: 1, memory: 6 },       // 6 GB     → 1 vCPU / 6 GB
+    7168: { vcpu: 1, memory: 7 },       // 7 GB     → 1 vCPU / 7 GB
+    8192: { vcpu: 1, memory: 8 },       // 8 GB     → 1 vCPU / 8 GB
+    10240: { vcpu: 2, memory: 10 },     // 10 GB    → 2 vCPU / 10 GB
 };
 
-// Reverse mapping: Fargate config to closest Lambda memory
+// Reverse mapping: Fargate config to closest Lambda memory (by memory parity)
 const getFargateToLambdaMemory = (vcpu, memory) => {
-    // Find the Lambda memory that best matches this Fargate config
     const entries = Object.entries(LAMBDA_TO_FARGATE_MAP);
     for (let i = entries.length - 1; i >= 0; i--) {
         const [mem, config] = entries[i];
-        if (config.vcpu <= vcpu) {
+        if (config.memory <= memory) {
             return Number(mem);
         }
     }
@@ -793,36 +802,31 @@ export default function LambdaFargateCostExercise() {
     const [lambdaMemory, setLambdaMemory] = useState(1024);
     const [duration, setDuration] = useState(200);
     const [invocationsPerMonth, setInvocationsPerMonth] = useState(1000000);
-    const [fargateConfig, setFargateConfig] = useState(FARGATE_CONFIGS[7]); // 1 vCPU, 2GB
+    const [fargateConfig, setFargateConfig] = useState(FARGATE_CONFIGS[1]); // 0.25 vCPU, 1 GB (matches 1024 MB Lambda)
     const [useArm, setUseArm] = useState(true);
     const [engineerSalary, setEngineerSalary] = useState(120000);
     const [utilizationPercent, setUtilizationPercent] = useState(70);
     const [includeFreerier, setIncludeFreeTier] = useState(false);
-    const [linkConfigs, setLinkConfigs] = useState(true); // Link Lambda memory to Fargate task size
 
-    // Handler for Lambda memory change (updates Fargate if linked)
+    // Handler for Lambda memory change (always updates Fargate to equivalent)
     const handleLambdaMemoryChange = (newMemory) => {
         setLambdaMemory(newMemory);
-        if (linkConfigs) {
-            const mappedConfig = LAMBDA_TO_FARGATE_MAP[newMemory];
-            if (mappedConfig) {
-                const config = FARGATE_CONFIGS.find(
-                    c => c.vcpu === mappedConfig.vcpu && c.memory === mappedConfig.memory
-                );
-                if (config) setFargateConfig(config);
-            }
+        const mappedConfig = LAMBDA_TO_FARGATE_MAP[newMemory];
+        if (mappedConfig) {
+            const config = FARGATE_CONFIGS.find(
+                c => c.vcpu === mappedConfig.vcpu && c.memory === mappedConfig.memory
+            );
+            if (config) setFargateConfig(config);
         }
     };
 
-    // Handler for Fargate config change (updates Lambda if linked)
+    // Handler for Fargate config change (always updates Lambda to equivalent)
     const handleFargateConfigChange = (vcpu, memory) => {
         const config = FARGATE_CONFIGS.find(c => c.vcpu === vcpu && c.memory === memory);
         if (config) {
             setFargateConfig(config);
-            if (linkConfigs) {
-                const lambdaMemory = getFargateToLambdaMemory(vcpu, memory);
-                setLambdaMemory(lambdaMemory);
-            }
+            const lambdaMem = getFargateToLambdaMemory(vcpu, memory);
+            setLambdaMemory(lambdaMem);
         }
     };
 
@@ -1026,6 +1030,11 @@ export default function LambdaFargateCostExercise() {
                 <h3 style={styles.cardTitle}>
                     ⚙️ Configuration
                 </h3>
+                <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>
+                    Lambda and Fargate sizes are linked by memory. The Fargate task is set to the smallest
+                    configuration whose memory meets or exceeds the Lambda allocation.
+                    {' '}<strong>{lambdaMemory >= 1024 ? `${(lambdaMemory / 1024).toFixed(1)} GB` : `${lambdaMemory} MB`} Lambda → {fargateConfig.vcpu} vCPU / {fargateConfig.memory} GB Fargate</strong>
+                </div>
                 <div style={styles.grid}>
                     {/* Lambda Config */}
                     <div>
@@ -1041,7 +1050,6 @@ export default function LambdaFargateCostExercise() {
                                 >
                                     Memory Allocation
                                 </Tooltip>
-                                {linkConfigs && <span style={{ marginLeft: '6px', fontSize: '11px', color: '#3b82f6' }}>🔗</span>}
                             </label>
                             <select
                                 style={styles.select}
@@ -1085,7 +1093,6 @@ export default function LambdaFargateCostExercise() {
                                 >
                                     Task Size
                                 </Tooltip>
-                                {linkConfigs && <span style={{ marginLeft: '6px', fontSize: '11px', color: '#3b82f6' }}>🔗</span>}
                             </label>
                             <select
                                 style={styles.select}
@@ -1095,19 +1102,12 @@ export default function LambdaFargateCostExercise() {
                                     handleFargateConfigChange(vcpu, memory);
                                 }}
                             >
-                                {FARGATE_CONFIGS
-                                    .filter(config => linkConfigs ? config.lambdaEquivalent : true)
-                                    .map((config) => (
+                                {FARGATE_CONFIGS.map((config) => (
                                         <option key={config.label} value={`${config.vcpu}-${config.memory}`}>
                                             {config.label}
                                         </option>
                                     ))}
                             </select>
-                            {linkConfigs && (
-                                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
-                                    Showing Lambda-equivalent configurations only
-                                </div>
-                            )}
                         </div>
                         <div style={styles.inputGroup}>
                             <label style={styles.label}>
@@ -1175,23 +1175,6 @@ export default function LambdaFargateCostExercise() {
                                     </button>
                                 ))}
                             </div>
-                        </div>
-                        <div style={styles.toggleContainer}>
-                            <div
-                                style={{ ...styles.toggle, ...(linkConfigs ? styles.toggleActive : {}) }}
-                                onClick={() => setLinkConfigs(!linkConfigs)}
-                            >
-                                <div style={{ ...styles.toggleKnob, ...(linkConfigs ? styles.toggleKnobActive : {}) }} />
-                            </div>
-                            <Tooltip
-                                title="Link Resource Configurations"
-                                content="When enabled, changing Lambda memory automatically selects a comparable Fargate task size (and vice versa) based on CPU equivalence. This ensures an apples-to-apples cost comparison. Lambda allocates ~1 vCPU per 1,769 MB of memory."
-                                example="1 GB Lambda → 0.5 vCPU Fargate | 2 GB Lambda → 1 vCPU Fargate"
-                            >
-                                <span style={styles.toggleLabel}>
-                                    Link Lambda ↔ Fargate Sizing
-                                </span>
-                            </Tooltip>
                         </div>
                         <div style={styles.toggleContainer}>
                             <div
