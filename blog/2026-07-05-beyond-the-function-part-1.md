@@ -2,7 +2,7 @@
 title: "Beyond the Function: A Lambda Developer Discovers ECS"
 description: "You moved a containerized Lambda to Fargate and it just worked. But Fargate is only one way to run ECS — so what is ECS, really?"
 slug: beyond-the-function-lambda-developer-discovers-ecs
-authors: [brian]
+authors: [Brian]
 tags: [aws, ecs, containers, fargate, lambda]
 ---
 
