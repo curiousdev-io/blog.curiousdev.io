@@ -5,6 +5,8 @@ authors: [Brian]
 tags: [aws, lambda, managed-instances]
 ---
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 If you've been following this series, you know what AWS Lambda Managed Instances (LMI) are and what they cost. In [Part 1](/aws-lambda-managed-instances-part-1-overview) we covered the overview and in [Part 2](/aws-lambda-managed-instances-part-2-cost) we dug into the cost model. Now it's time to answer the question that actually matters for day-to-day development: **will my existing Lambda code work on LMI, and what will I need to change?**
 
 The short answer is: maybe - _and possibly quite a bit_.

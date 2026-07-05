@@ -17,6 +17,8 @@ It's an important question, especially in organizations that deploy a lot of res
 
 <!--truncate-->
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
 ## The Compute Options
 
 ### AWS Lambda

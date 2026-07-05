@@ -14,6 +14,9 @@ So what *is* ECS, really?
 
 <!-- truncate -->
 
+<script async data-uid="2f82f140d9" src="https://curiousdev.kit.com/2f82f140d9/index.js"></script>
+
+
 :::info
 
 This is Part 1 of a series exploring Amazon ECS from a Lambda developer's point of view. If you've read [AWS Lambda to AWS Fargate](https://blog.curiousdev.io/aws-lambda-to-fargate), you already have one foot in the door — this series is about understanding the room you walked into.
