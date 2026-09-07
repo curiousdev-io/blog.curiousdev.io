@@ -28,26 +28,7 @@ One containerized web app, reachable from the internet, running as a managed ECS
 
 Here's the shape of it:
 
-```mermaid
-flowchart LR
-    Internet([Internet]) --> ALB["Application<br/>Load Balancer"]
-    ALB --> TG["Target Group<br/><code>TargetType: ip</code>"]
-    TG --> SVC["ECS Service<br/><code>DesiredCount: 2</code>"]
-    SVC --> T1["Task<br/><small>Fargate</small>"]
-    SVC --> T2["Task<br/><small>Fargate</small>"]
-    TD["Task Definition<br/><small>the blueprint</small>"] -. defines .-> T1
-    TD -. defines .-> T2
-
-    classDef edge fill:#E6E8FA,stroke:#2C38C0,stroke-width:1.5px,color:#1B2430
-    classDef ecs fill:#FBE9DA,stroke:#E1620B,stroke-width:1.5px,color:#1B2430
-    classDef task fill:#FFFFFF,stroke:#E1620B,stroke-width:1.5px,color:#1B2430
-    classDef spec fill:#FFFFFF,stroke:#65718A,stroke-width:1.5px,color:#1B2430,stroke-dasharray:4 3
-
-    class ALB,TG edge
-    class SVC ecs
-    class T1,T2 task
-    class TD spec
-```
+![ECS service shape: internet to load balancer to target group to service, with two Fargate tasks defined by one task definition](./img/ecs-service-shape.png)
 
 Six things to create, in dependency order: a **registry** (somewhere the image lives), a **cluster** (the boundary), a **task definition** (the blueprint), an **ALB and target group** (how traffic finds you), an **IAM role or two** (permission to exist), and a **service** (the thing that keeps N tasks running).
 
