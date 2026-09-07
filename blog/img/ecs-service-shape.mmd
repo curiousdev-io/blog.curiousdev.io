@@ -1,0 +1,24 @@
+flowchart LR
+    Internet([<b>Internet</b>]) --> ALB["<b>Application</b><br/><small>Load Balancer</small>"]
+    ALB --> TG["<b>Target Group</b><br/><code>TargetType: ip</code>"]
+    TG --> SVC["<b>ECS Service</b><br/><code>DesiredCount: 2</code>"]
+    SVC --> T1["<b>Task</b><br/><small>Fargate</small>"]
+    SVC --> T2["<b>Task</b><br/><small>Fargate</small>"]
+    TD["<b>Task Definition</b><br/><small>the blueprint</small>"] -. defines .-> T1
+    TD -. defines .-> T2
+
+    classDef edge fill:#E6E8FA,stroke:#2C38C0,stroke-width:1.5px,color:#1B2430
+    classDef ecs fill:#FBE9DA,stroke:#E1620B,stroke-width:1.5px,color:#1B2430
+    classDef task fill:#FFFFFF,stroke:#E1620B,stroke-width:1.5px,color:#1B2430
+    classDef spec fill:#FFFFFF,stroke:#65718A,stroke-width:1.5px,color:#1B2430,stroke-dasharray:4 3
+    classDef net  fill:#FFFFFF,stroke:#65718A,stroke-width:1.5px,color:#1B2430
+
+    class Internet net
+    class ALB,TG edge
+    class SVC ecs
+    class T1,T2 task
+    class TD spec
+
+    linkStyle 0,1,2 stroke:#2C38C0,stroke-width:2px
+    linkStyle 3,4 stroke:#E1620B,stroke-width:2px
+    linkStyle 5,6 stroke:#65718A,stroke-width:1.5px
