@@ -1,0 +1,47 @@
+name: CI
+
+# Vets a pull request before it can reach the deploy workflow. deploy.yml only
+# runs on push to main, so without this a broken build is found after merge.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and vet page generation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          # Needed so the page check can diff against the base branch.
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          # Matches the version pinned in .mise.toml.
+          node-version: 20.18.1
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build website
+        run: npm run build
+
+      - name: Vet page generation
+        run: node .github/scripts/check-pages.mjs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
